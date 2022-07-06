@@ -17,19 +17,21 @@ var servers0Port = ["n00dles",
 var servers1Port = ["neo-net",
                     "zer0",
                     "max-hardware",
-                    "iron-gym",
-                    "CSEC"];
+                    "iron-gym"];
 
 // Array of all servers that need 2 ports opened
 var servers2Port = ["silver-helix",
                     "phantasy",
-                    "omega-net",
-                    "avmnite-02h"];
+                    "omega-net"];
+
+var moneyless_servers = ["home",
+                         "CSEC",
+                         "avmnite-02h"];
 
 // Copy our scripts onto each server that requires 0 ports
 // to gain root access. Then use nuke() to gain admin access and
 // run the scripts.
-for (var i = 0; i < servers0Port.length; ++i) {
+for (var i in servers0Port) {
     var serv = servers0Port[i];
 
     scp(script_name, serv);
@@ -45,7 +47,7 @@ while (!fileExists("BruteSSH.exe")) {
 // Copy our scripts onto each server that requires 1 port
 // to gain root access. Then use brutessh() and nuke()
 // to gain admin access and run the scripts.
-for (var i = 0; i < servers1Port.length; ++i) {
+for (var i in servers1Port) {
     var serv = servers1Port[i];
 
     scp(script_name, serv);
@@ -62,7 +64,7 @@ while (!fileExists("FTPCrack.exe")) {
 // Copy our scripts onto each server that requires 1 port
 // to gain root access. Then use brutessh() and nuke()
 // to gain admin access and run the scripts.
-for (var i = 0; i < servers2Port.length; ++i) {
+for (var i in servers2Port) {
     var serv = servers2Port[i];
 
     scp(script_name, serv);
@@ -72,4 +74,13 @@ for (var i = 0; i < servers2Port.length; ++i) {
     exec(script_name, serv, Math.floor(getServerMaxRam(serv) / script_ram));
 }
 
-exec("post-refresh.script", "home", (Math.floor(getServerMaxRam("home") - getScriptRam("refresh.script")) / getScriptRam("post-refresh.script")));
+for (var i in moneyless_servers){
+    var serv = moneyless_servers[i];
+    
+    scp("post-refresh.script", serv);
+    brutessh(serv);
+    ftpcrack(serv);
+    nuke(serv);
+    if (moneyless_servers[i] == "home") exec("post-refresh.script", moneyless_servers[i], (Math.floor(getServerMaxRam(moneyless_servers[i]) - getScriptRam("refresh.script")) / getScriptRam("post-refresh.script")));
+    else exec("post-refresh.script", moneyless_servers[i], Math.floor(getServerMaxRam(moneyless_servers[i]) / getScriptRam("post-refresh.script")));
+}

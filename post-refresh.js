@@ -3,7 +3,7 @@
 var target = "";
 if (!fileExists("BruteSSH.exe")) target = "harakiri-sushi";
 else if (!fileExists("FTPCrack")) target = "iron-gym";
-else target = "silve-helix"
+else target = "silver-helix"
 
 // Defines how much money a server should have before we hack it
 // In this case, it is set to 75% of the server's max money
