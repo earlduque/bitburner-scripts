@@ -22,7 +22,9 @@ var servers1Port = ["neo-net",
 
 // Array of all servers that need 2 ports opened
 var servers2Port = ["silver-helix",
-                    "phantasy"];
+                    "phantasy",
+                    "omega-net",
+                    "avmnite-02h"];
 
 // Copy our scripts onto each server that requires 0 ports
 // to gain root access. Then use nuke() to gain admin access and
@@ -60,8 +62,8 @@ while (!fileExists("FTPCrack.exe")) {
 // Copy our scripts onto each server that requires 1 port
 // to gain root access. Then use brutessh() and nuke()
 // to gain admin access and run the scripts.
-for (var i = 0; i < servers1Port.length; ++i) {
-    var serv = servers1Port[i];
+for (var i = 0; i < servers2Port.length; ++i) {
+    var serv = servers2Port[i];
 
     scp(script_name, serv);
     brutessh(serv);
