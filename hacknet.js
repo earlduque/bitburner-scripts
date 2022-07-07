@@ -7,7 +7,7 @@ export async function main(ns) {
 
 	var keep_going = true;
 
-	while (keep_going) {
+	while (true) {
 		var node_total = ns.hacknet.numNodes();
 		var current_cost = ns.hacknet.getPurchaseNodeCost();
 		var purchase = { "node": -1, "item": "" };
@@ -41,6 +41,10 @@ export async function main(ns) {
 			} else if (purchase.item == "core") {
 				if (!ns.hacknet.upgradeCore(purchase.node, 1)) keep_going = false;
 			}
+		}
+		if (!keep_going) {
+			await ns.sleep(60000);
+			keep_going = true;
 		}
 	}
 	ns.print("End");

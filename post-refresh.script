@@ -1,7 +1,12 @@
 // Defines the "target server", which is the server
 // that we're going to hack. In this case, it's "n00dles"
 var target = "";
-if (!fileExists("BruteSSH.exe")) target = "harakiri-sushi";
+var hacking = getHackingLevel();
+if (hacking < 5) target = "foodnstuff";
+else if (hacking < 10) target = "sigma-cosmetics";
+else if (hacking < 30) target = "joesguns";
+else if (hacking < 40) target = "hong-fang-tea";
+else if (!fileExists("BruteSSH.exe")) target = "harakiri-sushi";
 else if (!fileExists("FTPCrack")) target = "iron-gym";
 else target = "silver-helix"
 

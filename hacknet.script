@@ -4,7 +4,7 @@
 
 var keep_going = true;
 
-while (keep_going) {
+while (true) {
 	var node_total = hacknet.numNodes();
 	var current_cost = hacknet.getPurchaseNodeCost();
 	var purchase = { "node": -1, "item": "" };
@@ -37,5 +37,9 @@ while (keep_going) {
 		} else if (purchase.item == "core"){
 			if (!hacknet.upgradeCore(purchase.node, 1)) keep_going = false;
 		}
+	}
+	if (!keep_going) {
+		sleep(60000);
+		keep_going = true;
 	}
 }
