@@ -5,7 +5,7 @@ export async function main(ns) {
 	var script_ram = ns.getScriptRam(script_name);
 
 	// Run hacknet
-	ns.exec("hacknet.js", "home");
+	ns.exec("hacknet.js", "home", 1);
 
 	// Array of all servers
 	var servers_all = [];
@@ -43,7 +43,9 @@ export async function main(ns) {
 
 		await ns.scp(script_name, serv);
 		await ns.nuke(serv);
-		ns.exec(script_name, serv, Math.floor(ns.getServerMaxRam(serv) / script_ram));
+		let threads = Math.floor(ns.getServerMaxRam(serv) / script_ram);
+		ns.exec(script_name, serv, threads > 0 ? threads : 1);
+		await ns.sleep(100);
 	}
 
 	// Wait until we acquire the "BruteSSH.exe" program
@@ -61,7 +63,9 @@ export async function main(ns) {
 		await ns.scp(script_name, serv);
 		ns.brutessh(serv);
 		await ns.nuke(serv);
-		ns.exec(script_name, serv, Math.floor(ns.getServerMaxRam(serv) / script_ram));
+		let threads = Math.floor(ns.getServerMaxRam(serv) / script_ram);
+		ns.exec(script_name, serv, threads > 0 ? threads : 1);
+		await ns.sleep(100);
 	}
 
 	// cancel the "waiting" script
@@ -83,7 +87,9 @@ export async function main(ns) {
 		ns.brutessh(serv);
 		ns.ftpcrack(serv);
 		await ns.nuke(serv);
-		ns.exec(script_name, serv, Math.floor(ns.getServerMaxRam(serv) / script_ram));
+		let threads = Math.floor(ns.getServerMaxRam(serv) / script_ram);
+		ns.exec(script_name, serv, threads > 0 ? threads : 1);
+		await ns.sleep(100);
 	}
 
 	// cancel the "waiting" script
@@ -104,8 +110,15 @@ export async function main(ns) {
 				} else can_nuke = false;
 			} else can_nuke = false;
 			if (ns.getServerNumPortsRequired(serv) == 0 || can_nuke) await ns.nuke(serv);
-			if (moneyless_servers[i] == "home") ns.exec("post-refresh.script", moneyless_servers[i], (Math.floor(ns.getServerMaxRam(moneyless_servers[i]) - ns.getScriptRam("refresh.script")) / ns.getScriptRam("post-refresh.script")));
-			else ns.exec("post-refresh.script", moneyless_servers[i], Math.floor(ns.getServerMaxRam(moneyless_servers[i]) / ns.getScriptRam("post-refresh.script")));
+			let threads = 1;
+			if (moneyless_servers[i] == "home") {
+				threads = (Math.floor(ns.getServerMaxRam(moneyless_servers[i]) - ns.getScriptRam("refresh.script")) / ns.getScriptRam("post-refresh.script"));
+				ns.exec("post-refresh.script", moneyless_servers[i], threads > 0 ? threads : 1);
+			} else {
+				threads = Math.floor(ns.getServerMaxRam(moneyless_servers[i]) / ns.getScriptRam("post-refresh.script"));
+				ns.exec("post-refresh.script", moneyless_servers[i], threads > 0 ? threads: 1);
+			}
+			await ns.sleep(100);
 		}
 	}
 }

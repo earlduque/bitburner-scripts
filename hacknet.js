@@ -32,7 +32,7 @@ export async function main(ns) {
 
 		ns.print("Purchasing: " + purchase.node + '-' + purchase.item);
 		if (purchase.node == -1) {
-			if (!ns.hacknet.purchaseNode()) keep_going = false;
+			if (ns.hacknet.purchaseNode() == -1) keep_going = false;
 		} else {
 			if (purchase.item == "level") {
 				if (!ns.hacknet.upgradeLevel(purchase.node, 1)) keep_going = false;
@@ -45,7 +45,7 @@ export async function main(ns) {
 		if (!keep_going) {
 			await ns.sleep(60000);
 			keep_going = true;
-		}
+		} else await ns.sleep(500);
 	}
 	ns.print("End");
 }
