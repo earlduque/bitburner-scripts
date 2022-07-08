@@ -4,14 +4,22 @@ export async function main(ns) {
 	var script_name = "early.script";
 	var script_ram = ns.getScriptRam(script_name);
 
-	// Run hacknet
-	ns.exec("hacknet.js", "home", 1);
+	// Run hacknet and/or servers
+	if (ns.args[0] == 1) ns.exec("hacknet.js", "home", 1);
+	else if (ns.args[0] == 2) ns.exec("createservers.js", "home", 1);
+	else if (ns.args[0] == 3) {
+		ns.exec("hacknet.js", "home", 1);
+		ns.exec("createservers.js", "home", 1);
+	}
 
 	// Array of all servers
 	var servers_all = [];
 	var servers0Port = [];
 	var servers1Port = [];
 	var servers2Port = [];
+	var servers3Port = [];
+	var servers4Port = [];
+	var servers5Port = [];
 	var moneyless_servers = ["home"];
 	scan_loop("home");
 
@@ -29,6 +37,9 @@ export async function main(ns) {
 					if (ns.getServerNumPortsRequired(this_scan[i]) == 0) servers0Port.push(this_scan[i]);
 					else if (ns.getServerNumPortsRequired(this_scan[i]) == 1) servers1Port.push(this_scan[i]);
 					else if (ns.getServerNumPortsRequired(this_scan[i]) == 2) servers2Port.push(this_scan[i]);
+					else if (ns.getServerNumPortsRequired(this_scan[i]) == 3) servers3Port.push(this_scan[i]);
+					else if (ns.getServerNumPortsRequired(this_scan[i]) == 4) servers4Port.push(this_scan[i]);
+					else if (ns.getServerNumPortsRequired(this_scan[i]) == 5) servers5Port.push(this_scan[i]);
 				}
 				scan_loop(this_scan[i]);
 			}
@@ -62,7 +73,7 @@ export async function main(ns) {
 
 		await ns.scp(script_name, serv);
 		ns.brutessh(serv);
-		await ns.nuke(serv);
+		ns.nuke(serv);
 		let threads = Math.floor(ns.getServerMaxRam(serv) / script_ram);
 		ns.exec(script_name, serv, threads > 0 ? threads : 1);
 		await ns.sleep(100);
@@ -71,7 +82,7 @@ export async function main(ns) {
 	// cancel the "waiting" script
 	if (ns.scriptRunning("post-refresh.script", "home")) ns.scriptKill("post-refresh.script", "home");
 
-	// Wait until we acquire the "BruteSSH.exe" program
+	// Wait until we acquire the "FTPCrack.exe" program
 	while (!ns.fileExists("FTPCrack.exe")) {
 		await run_moneyless();
 		await ns.sleep(60000);
@@ -86,7 +97,85 @@ export async function main(ns) {
 		await ns.scp(script_name, serv);
 		ns.brutessh(serv);
 		ns.ftpcrack(serv);
-		await ns.nuke(serv);
+		ns.nuke(serv);
+		let threads = Math.floor(ns.getServerMaxRam(serv) / script_ram);
+		ns.exec(script_name, serv, threads > 0 ? threads : 1);
+		await ns.sleep(100);
+	}
+
+	// cancel the "waiting" script
+	if (ns.scriptRunning("post-refresh.script", "home")) ns.scriptKill("post-refresh.script", "home");
+
+	// Wait until we acquire the "relaySMTP.exe" program
+	while (!ns.fileExists("relaySMTP.exe")) {
+		await run_moneyless();
+		await ns.sleep(60000);
+	}
+
+	// Copy our scripts onto each server that requires 1 port
+	// to gain root access. Then use brutessh(), ftpcrack(), and nuke()
+	// to gain admin access and run the scripts.
+	for (var i in servers3Port) {
+		var serv = servers3Port[i];
+
+		await ns.scp(script_name, serv);
+		ns.brutessh(serv);
+		ns.ftpcrack(serv);
+		ns.relaysmtp(serv);
+		ns.nuke(serv);
+		let threads = Math.floor(ns.getServerMaxRam(serv) / script_ram);
+		ns.exec(script_name, serv, threads > 0 ? threads : 1);
+		await ns.sleep(100);
+	}
+
+	// cancel the "waiting" script
+	if (ns.scriptRunning("post-refresh.script", "home")) ns.scriptKill("post-refresh.script", "home");
+
+	// Wait until we acquire the "HTTPWorm.exe" program
+	while (!ns.fileExists("HTTPWorm.exe")) {
+		await run_moneyless();
+		await ns.sleep(60000);
+	}
+
+	// Copy our scripts onto each server that requires 1 port
+	// to gain root access. Then use brutessh(), ftpcrack(), and nuke()
+	// to gain admin access and run the scripts.
+	for (var i in servers4Port) {
+		var serv = servers4Port[i];
+
+		await ns.scp(script_name, serv);
+		ns.brutessh(serv);
+		ns.ftpcrack(serv);
+		ns.relaysmtp(serv);
+		ns.httpworm(serv);
+		ns.nuke(serv);
+		let threads = Math.floor(ns.getServerMaxRam(serv) / script_ram);
+		ns.exec(script_name, serv, threads > 0 ? threads : 1);
+		await ns.sleep(100);
+	}
+
+	// cancel the "waiting" script
+	if (ns.scriptRunning("post-refresh.script", "home")) ns.scriptKill("post-refresh.script", "home");
+
+	// Wait until we acquire the "SQLInject.exe" program
+	while (!ns.fileExists("SQLInject.exe")) {
+		await run_moneyless();
+		await ns.sleep(60000);
+	}
+
+	// Copy our scripts onto each server that requires 1 port
+	// to gain root access. Then use brutessh(), ftpcrack(), and nuke()
+	// to gain admin access and run the scripts.
+	for (var i in servers5Port) {
+		var serv = servers5Port[i];
+
+		await ns.scp(script_name, serv);
+		ns.brutessh(serv);
+		ns.ftpcrack(serv);
+		ns.relaysmtp(serv);
+		ns.httpworm(serv);
+		ns.sqlinject(serv);
+		ns.nuke(serv);
 		let threads = Math.floor(ns.getServerMaxRam(serv) / script_ram);
 		ns.exec(script_name, serv, threads > 0 ? threads : 1);
 		await ns.sleep(100);

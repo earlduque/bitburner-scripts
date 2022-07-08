@@ -45,7 +45,7 @@ export async function main(ns) {
 		if (!keep_going) {
 			await ns.sleep(60000);
 			keep_going = true;
-		} else await ns.sleep(500);
+		} //else await ns.sleep(500);
 	}
 	ns.print("End");
 }
