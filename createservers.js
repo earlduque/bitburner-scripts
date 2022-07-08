@@ -43,8 +43,8 @@ export async function main(ns) {
 
 	var myserver = "myservers.js";
 	var hn = "weaken-";
-	var ram = 2;
-	var sn = 0;
+	var ram = 8;
+	var sn = ns.getPurchasedServers().length;
 	var cycles = ns.args[1] || 0;
 
 	if (ns.args[0] == "delete") {
@@ -67,6 +67,15 @@ export async function main(ns) {
 			.sort((a, b) => a[1] - b[1] || a[2] - b[2])
 			.map(n => n.join('-'));
 		//ns.print(sorted_servers);
+
+		if (ns.args[0] == "push"){
+			for (var push_i in sorted_servers){
+				ns.scriptKill(myserver, sorted_servers[push_i]);
+				await move_script(sorted_servers[push_i], sorted_servers[push_i].split('-')[2]);
+			}
+			return;
+		}
+
 		if (sorted_servers.length == ns.getPurchasedServerLimit()) {
 			for (var i in sorted_servers) {
 				var this_server = sorted_servers[i].split("-");
@@ -122,8 +131,8 @@ export async function main(ns) {
 						return;
 					}
 				}
+				sn++;
 			}
-			sn++;
 		}
 
 		if (!keep_going) {

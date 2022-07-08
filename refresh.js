@@ -201,8 +201,13 @@ export async function main(ns) {
 			if (ns.getServerNumPortsRequired(serv) == 0 || can_nuke) await ns.nuke(serv);
 			let threads = 1;
 			if (moneyless_servers[i] == "home") {
-				threads = (Math.floor(ns.getServerMaxRam(moneyless_servers[i]) - ns.getScriptRam("refresh.script")) / ns.getScriptRam("post-refresh.script"));
-				ns.exec("post-refresh.script", moneyless_servers[i], threads > 0 ? threads : 1);
+				threads = Math.floor(ns.getServerMaxRam(moneyless_servers[i]) - ns.getServerUsedRam("home")) / ns.getScriptRam("post-refresh-home.js", "home");
+				const money_servers = Array.prototype.concat(servers0Port, servers1Port, servers2Port, servers3Port, servers4Port, servers5Port);
+				let scripts = Math.floor(threads / money_servers.length);
+				ns.scriptKill("post-refresh-home.js", "home");
+				for (var server_i in money_servers) {
+					ns.exec("post-refresh-home.js", "home", scripts > 0 ? scripts : 1, money_servers[server_i]);
+				}
 			} else {
 				threads = Math.floor(ns.getServerMaxRam(moneyless_servers[i]) / ns.getScriptRam("post-refresh.script"));
 				ns.exec("post-refresh.script", moneyless_servers[i], threads > 0 ? threads: 1);
