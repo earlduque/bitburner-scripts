@@ -4,7 +4,8 @@ Just my script files for [BitBurner](https://store.steampowered.com/app/1812820/
 
 - [refresh.js](/refresh.js) is the starting point
   - it nukes then copies [early.script](/early.script) to all listed servers
-  - and then runs [post-refresh.script](/post-refresh.script) on all moneyless servers
+  - and then runs [post-refresh.script](/post-refresh.script) on all moneyless servers and targets high earners (wip)
+  - and then runs [post-refresh-home.js](/post-refresh-home.js) which targets all money servers evenly distributing the remaining threads.
   - `run refresh.js 1` will also start [hacknet.js](/hacknet.js)
   - `run refresh.js 2` will also start [createservers.js](/createservers.js)
   - `run refresh.js 3` will start both
