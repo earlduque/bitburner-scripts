@@ -1,5 +1,28 @@
 /** @param {NS} ns */
 export async function main(ns) {
+
+	var wordy_logs = ["disableLog",
+		"sleep",
+		"exec",
+		"getServerMaxRam",
+		"nuke",
+		"scp",
+		"getServerNumPortsRequired",
+		"scan",
+		"getServerRequiredHackingLevel",
+		"getServerMaxMoney",
+		"fileExists",
+		"brutessh",
+		"ftpcrack",
+		"relaysmtp",
+		"httpworm",
+		"sqlinject",
+		"scriptKill",
+		"getHackingLevel",
+		"getServerUsedRam"
+	];
+	for (var log_name in wordy_logs) ns.disableLog(wordy_logs[log_name]);
+
 	// Script variables
 	var script_name = "early.script";
 	var script_ram = ns.getScriptRam(script_name);
@@ -26,9 +49,13 @@ export async function main(ns) {
 	function scan_loop(server_name) {
 		var this_scan = ns.scan(server_name);
 		for (var i in this_scan) {
-			if (servers_all.indexOf(this_scan[i]) == -1 && this_scan[i] != server_name) {
+			if (servers_all.indexOf(this_scan[i]) == -1 && this_scan[i] != server_name && this_scan[i] != "home" && this_scan[i].indexOf("weaken-") == -1) {
 				if (ns.getServerMaxMoney(this_scan[i]) == 0 && ns.getServerMaxRam(this_scan[i]) == 0) continue;
-				else if (ns.getServerNumPortsRequired(this_scan[i]) > 2) continue;
+				else if (!ns.fileExists("BruteSSH.exe", "home") && ns.getServerNumPortsRequired(this_scan[i]) > 0) continue;
+				else if (!ns.fileExists("FTPCrack.exe", "home") && ns.getServerNumPortsRequired(this_scan[i]) > 1) continue;
+				else if (!ns.fileExists("relaySMTP.exe", "home") && ns.getServerNumPortsRequired(this_scan[i]) > 2) continue;
+				else if (!ns.fileExists("HTTPWorm.exe", "home") && ns.getServerNumPortsRequired(this_scan[i]) > 3) continue;
+				else if (!ns.fileExists("SQLInject.exe", "home") && ns.getServerNumPortsRequired(this_scan[i]) > 4) continue;
 				else if (ns.getServerRequiredHackingLevel(this_scan[i]) > ns.getHackingLevel()) continue;
 
 				servers_all.push(this_scan[i]);
@@ -44,6 +71,11 @@ export async function main(ns) {
 				scan_loop(this_scan[i]);
 			}
 		}
+	}
+
+	if (ns.args[0] == "ls") {
+		ns.print({ "0": servers0Port, "1": servers1Port, "2": servers2Port, "3": servers3Port, "4": servers4Port, "5": servers5Port, "moneyless": moneyless_servers, "all": servers_all });
+		return;
 	}
 
 	// Copy our scripts onto each server that requires 0 ports
@@ -196,6 +228,15 @@ export async function main(ns) {
 				ns.brutessh(serv);
 				if (ns.getServerNumPortsRequired(serv) > 1 && ns.fileExists("FTPCrack.exe")) {
 					ns.ftpcrack(serv);
+					if (ns.getServerNumPortsRequired(serv) > 1 && ns.fileExists("relaySMTP.exe")) {
+						ns.relaysmtp(serv);
+						if (ns.getServerNumPortsRequired(serv) > 1 && ns.fileExists("HTTPWorm.exe")) {
+							ns.httpworm(serv);
+							if (ns.getServerNumPortsRequired(serv) > 1 && ns.fileExists("SQLInject.exe")) {
+								ns.sqlinject(serv);
+							} else can_nuke = false;
+						} else can_nuke = false;
+					} else can_nuke = false;
 				} else can_nuke = false;
 			} else can_nuke = false;
 			if (ns.getServerNumPortsRequired(serv) == 0 || can_nuke) await ns.nuke(serv);
@@ -210,7 +251,7 @@ export async function main(ns) {
 				}
 			} else {
 				threads = Math.floor(ns.getServerMaxRam(moneyless_servers[i]) / ns.getScriptRam("post-refresh.script"));
-				ns.exec("post-refresh.script", moneyless_servers[i], threads > 0 ? threads: 1);
+				ns.exec("post-refresh.script", moneyless_servers[i], threads > 0 ? threads : 1);
 			}
 			await ns.sleep(100);
 		}
