@@ -2,10 +2,10 @@
 export async function main(ns) {
 
 	var wordy_logs = ["disableLog",
-					  "sleep",
-					  "getServerSecurityLevel",
-					  "getServerMoneyAvailable"
-					  ];
+		"sleep",
+		"getServerSecurityLevel",
+		"getServerMoneyAvailable"
+	];
 	for (var log_name in wordy_logs) ns.disableLog(wordy_logs[log_name]);
 
 	// Defines the "target server", which is the server
@@ -26,12 +26,15 @@ export async function main(ns) {
 		if (ns.getServerSecurityLevel(target) > securityThresh) {
 			// If the server's security level is above our threshold, weaken it
 			await ns.weaken(target);
+		/*} else if (ns.getServerMoneyAvailable(target) == 0) {
+			if (ns.getServerSecurityLevel("home") > ns.getServerMinSecurityLevel("home") + 5) await ns.weaken("home");
+			else await ns.hack("home");*/
 		} else if (ns.getServerMoneyAvailable(target) < moneyThresh) {
 			// If the server's money is less than our threshold, grow it
-			await ns.grow(target);
+			await ns.grow(target, 1);
 		} else {
 			// Otherwise, hack it
-			await ns.hack(target);
+			// await ns.hack(target);
 		}
 		await ns.sleep(500);
 	}

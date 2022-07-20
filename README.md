@@ -17,4 +17,15 @@ Just my script files for [BitBurner](https://store.steampowered.com/app/1812820/
   - `run createservers.js delete "server-name"` will delete the specific server
   - `run createservers.js -c int` will run for the designated number of cycles before stopping
 
+Aliases I use:
+
+- alias buyOpeners=buy bruteSSH.exe ; buy FTPcrack.exe ; buy relaySMTP.exe ; buy HTTPworm.exe ; buy SQLinject.exe
+alias fullbackdoor=run BruteSSH.exe ; run FTPCrack.exe ; run relaySMTP.exe ; run HTTPWorm.exe ; run SQLInject.exe ; run NUKE.exe ; backdoor
+- alias back1=home ; connect n00dles ; connect CSEC ; run BruteSSH.exe ; run FTPCrack.exe ; run relaySMTP.exe ; run HTTPWorm.exe ; run SQLInject.exe ; run NUKE.exe ; backdoor ; home ;
+- alias back2=home ; connect sigma-cosmetics ; connect nectar-net ; connect neo-net ; connect avmnite-02h ; run BruteSSH.exe ; run FTPCrack.exe ; run relaySMTP.exe ; run HTTPWorm.exe ; run SQLInject.exe ; run NUKE.exe ; backdoor ; home ;
+- alias back3=home ; connect harakiri-sushi ; connect max-hardware ; connect omega-net ; connect netlink ; connect I.I.I.I ; run BruteSSH.exe ; run FTPCrack.exe ; run relaySMTP.exe ; run HTTPWorm.exe ; run SQLInject.exe ; run NUKE.exe ; backdoor ; home ;
+- alias back4=home ; connect sigma-cosmetics ; connect nectar-net ; connect neo-net ; connect the-hub ; connect syscore ; connect millenium-fitness ; connect aerocorp ; connect deltaone ; connect zeus-med; connect taiyang-digital ; connect run4theh111z ; run BruteSSH.exe ; run FTPCrack.exe ; run relaySMTP.exe ; run HTTPWorm.exe ; run SQLInject.exe ; run NUKE.exe ; backdoor; home ;
+- alias buyall=buy bruteSSH.exe ; buy FTPcrack.exe ; buy relaySMTP.exe ; buy HTTPworm.exe ; buy SQLinject.exe ; buy ServerProfiler.exe ; buy DeepscanV1.exe ; buy DeepscanV2.exe ; buy AutoLink.exe ; buy Formulas.exe ;
+- global alias refresh=run refresh.js
+
 I'm trying to not use any scripts from the community and make them on my own using only the docs

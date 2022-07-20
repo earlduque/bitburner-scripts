@@ -31,7 +31,11 @@ export async function main(ns) {
 			if (servers_all.indexOf(this_scan[i]) == -1 && this_scan[i] != server_name) {
 				if (!include_hn) {
 					if (ns.getServerMaxMoney(this_scan[i]) == 0 && ns.getServerMaxRam(this_scan[i]) == 0) continue;
-					else if (ns.getServerNumPortsRequired(this_scan[i]) > 2) continue;
+					else if (!ns.fileExists("BruteSSH.exe", "home") && ns.getServerNumPortsRequired(this_scan[i]) > 0) continue;
+					else if (!ns.fileExists("FTPCrack.exe", "home") && ns.getServerNumPortsRequired(this_scan[i]) > 1) continue;
+					else if (!ns.fileExists("relaySMTP.exe", "home") && ns.getServerNumPortsRequired(this_scan[i]) > 2) continue;
+					else if (!ns.fileExists("HTTPWorm.exe", "home") && ns.getServerNumPortsRequired(this_scan[i]) > 3) continue;
+					else if (!ns.fileExists("SQLInject.exe", "home") && ns.getServerNumPortsRequired(this_scan[i]) > 4) continue;
 					else if (ns.getServerRequiredHackingLevel(this_scan[i]) > ns.getHackingLevel()) continue;
 					else if (ns.getServerMaxMoney(this_scan[i]) == 0 && ns.getServerMaxRam(this_scan[i]) != 0) continue;
 				}
@@ -59,6 +63,7 @@ export async function main(ns) {
 	}
 
 	while (true) {
+		if (ram > 1048576) break;
 		var keep_going = true;
 		let existing_servers = ns.getPurchasedServers();
 		let sorted_servers = existing_servers
@@ -68,8 +73,8 @@ export async function main(ns) {
 			.map(n => n.join('-'));
 		//ns.print(sorted_servers);
 
-		if (ns.args[0] == "push"){
-			for (var push_i in sorted_servers){
+		if (ns.args[0] == "push") {
+			for (var push_i in sorted_servers) {
 				ns.scriptKill(myserver, sorted_servers[push_i]);
 				await move_script(sorted_servers[push_i], sorted_servers[push_i].split('-')[2]);
 			}
@@ -142,9 +147,28 @@ export async function main(ns) {
 		}
 	}
 
-	async function move_script(server_name, target_server) {
+	if (ram > 1048576) {
+		var final_servers = ns.getPurchasedServers();
+		for (var server_final in final_servers) {
+			await move_script(final_servers[server_final]);
+		}
+	}
+
+	async function move_script(server_name) {
 		await ns.scp(myserver, server_name);
-		var threads = Math.floor(ns.getServerMaxRam(server_name) / ns.getScriptRam(myserver, server_name));
-		ns.exec(myserver, server_name, threads > 0 ? threads : 1, servers_all[target_server] || servers_all[servers_all.length - 1]);
+		ns.scriptKill(myserver, server_name);
+		const money_servers = JSON.parse(ns.args[0]);
+		var threads = Math.floor(ns.getServerMaxRam(server_name) / ns.getScriptRam(myserver, server_name) / money_servers.length);
+		//ns.print(server_name + ': maxram=' + ns.getServerMaxRam(server_name) + ' scriptram=' + ns.getScriptRam(myserver, server_name) + ' length=' + money_servers.length + ' threads=' + threads);
+		//ns.exec(myserver, server_name, threads > 0 ? threads : 1, servers_all[servers_all.length - parseInt(target_server)] || servers_all[servers_all.length - 1]);
+		for (var server_i in money_servers) {
+			ns.exec(myserver, server_name, threads > 0 ? threads : 1, money_servers[server_i]);
+		}
 	}
 }
+
+/*
+for (var server_i in money_servers) {
+					ns.exec("post-refresh-home.js", "home", scripts > 0 ? scripts : 1, money_servers[server_i]);
+				}
+*/

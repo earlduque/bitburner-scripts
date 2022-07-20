@@ -29,10 +29,10 @@ export async function main(ns) {
 
 	// Run hacknet and/or servers
 	if (ns.args[0] == 1) ns.exec("hacknet.js", "home", 1);
-	else if (ns.args[0] == 2) ns.exec("createservers.js", "home", 1);
+	//else if (ns.args[0] == 2) ns.exec("createservers.js", "home", 1);
 	else if (ns.args[0] == 3) {
 		ns.exec("hacknet.js", "home", 1);
-		ns.exec("createservers.js", "home", 1);
+		//ns.exec("createservers.js", "home", 1);
 	}
 
 	// Array of all servers
@@ -47,6 +47,9 @@ export async function main(ns) {
 	scan_loop("home");
 
 	function scan_loop(server_name) {
+		if (ns.args[0] == "ls" && ns.args[1] == "slow") {
+			ns.print("Scanning " + server_name);
+		}
 		var this_scan = ns.scan(server_name);
 		for (var i in this_scan) {
 			if (servers_all.indexOf(this_scan[i]) == -1 && this_scan[i] != server_name && this_scan[i] != "home" && this_scan[i].indexOf("weaken-") == -1) {
@@ -215,10 +218,10 @@ export async function main(ns) {
 
 	// cancel the "waiting" script
 	if (ns.scriptRunning("post-refresh.script", "home")) ns.scriptKill("post-refresh.script", "home");
-	await run_moneyless();
+	await run_moneyless(true);
 
 	// fills the moneyless servers' remaining ram to put them to work
-	async function run_moneyless() {
+	async function run_moneyless(run_final) {
 		for (var i in moneyless_servers) {
 			var serv = moneyless_servers[i];
 
@@ -242,13 +245,15 @@ export async function main(ns) {
 			if (ns.getServerNumPortsRequired(serv) == 0 || can_nuke) await ns.nuke(serv);
 			let threads = 1;
 			if (moneyless_servers[i] == "home") {
-				threads = Math.floor(ns.getServerMaxRam(moneyless_servers[i]) - ns.getServerUsedRam("home")) / ns.getScriptRam("post-refresh-home.js", "home");
-				const money_servers = Array.prototype.concat(servers0Port, servers1Port, servers2Port, servers3Port, servers4Port, servers5Port);
-				let scripts = Math.floor(threads / money_servers.length);
-				ns.scriptKill("post-refresh-home.js", "home");
-				for (var server_i in money_servers) {
-					ns.exec("post-refresh-home.js", "home", scripts > 0 ? scripts : 1, money_servers[server_i]);
-				}
+			ns.scriptKill("post-refresh-home.js", "home");
+			threads = Math.floor(ns.getServerMaxRam(moneyless_servers[i]) - ns.getServerUsedRam("home")) / ns.getScriptRam("post-refresh-home.js", "home");
+			const money_servers = Array.prototype.concat(servers0Port, servers1Port, servers2Port, servers3Port, servers4Port, servers5Port);
+			let scripts = Math.floor(threads / money_servers.length);
+			for (var server_i in money_servers) {
+				ns.exec("post-refresh-home.js", "home", scripts > 0 ? scripts : 1, money_servers[server_i]);
+			}
+			// Run servers
+			if (run_final && (ns.args[0] == 2 || ns.args[0] == 3)) ns.exec("createservers.js", "home", 1, JSON.stringify(money_servers));
 			} else {
 				threads = Math.floor(ns.getServerMaxRam(moneyless_servers[i]) / ns.getScriptRam("post-refresh.script"));
 				ns.exec("post-refresh.script", moneyless_servers[i], threads > 0 ? threads : 1);
